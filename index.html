@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="nl-BE">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Is Jan weer grumpy?</title>
+  <style>
+    :root {
+      --red: #b80f1f;
+      --dark-red: #7a0712;
+      --black: #17120f;
+      --ink: #24160f;
+      --beige: #f3dfb8;
+      --paper: #fff0cf;
+      --gold: #e4b44b;
+      --shadow: rgba(23, 18, 15, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(228, 180, 75, 0.35), transparent 26rem),
+        radial-gradient(circle at 80% 0%, rgba(184, 15, 31, 0.28), transparent 28rem),
+        linear-gradient(135deg, var(--beige), #d9b574 62%, #9b1b1b 62%);
+      display: grid;
+      place-items: center;
+      padding: 1.25rem;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(23, 18, 15, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23, 18, 15, 0.045) 1px, transparent 1px);
+      background-size: 18px 18px;
+      mix-blend-mode: multiply;
+    }
+
+    .poster {
+      width: min(960px, 100%);
+      min-height: min(760px, calc(100vh - 2.5rem));
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(160deg, rgba(255, 240, 207, 0.96), rgba(243, 223, 184, 0.92)),
+        repeating-linear-gradient(-8deg, transparent 0 18px, rgba(122, 7, 18, 0.06) 18px 21px);
+      border: 0.75rem solid var(--black);
+      border-radius: 1.1rem;
+      box-shadow: 0 1.5rem 3.5rem var(--shadow), inset 0 0 0 0.35rem var(--red);
+      padding: clamp(1.2rem, 4vw, 3rem);
+      isolation: isolate;
+    }
+
+    .poster::before,
+    .poster::after {
+      content: "☭";
+      position: absolute;
+      z-index: -1;
+      color: rgba(184, 15, 31, 0.08);
+      font-size: clamp(12rem, 32vw, 25rem);
+      line-height: 1;
+      transform: rotate(-18deg);
+    }
+
+    .poster::before {
+      top: -3rem;
+      right: -1rem;
+    }
+
+    .poster::after {
+      content: "✊";
+      bottom: -4.5rem;
+      left: -2rem;
+      transform: rotate(12deg);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: clamp(1rem, 3vw, 2.2rem);
+      text-transform: uppercase;
+    }
+
+    .stamp {
+      background: var(--red);
+      color: var(--paper);
+      border: 0.2rem solid var(--black);
+      box-shadow: 0.35rem 0.35rem 0 var(--black);
+      padding: 0.6rem 0.9rem;
+      transform: rotate(-2deg);
+      letter-spacing: 0.08em;
+      font-size: clamp(0.85rem, 2.2vw, 1.1rem);
+    }
+
+    .german {
+      font-family: "UnifrakturCook", "Old English Text MT", "Goudy Text MT", Georgia, serif;
+      font-weight: 900;
+      letter-spacing: 0.03em;
+    }
+
+    .badge {
+      width: clamp(4.6rem, 13vw, 7rem);
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border: 0.24rem solid var(--black);
+      border-radius: 50%;
+      background: var(--gold);
+      color: var(--black);
+      box-shadow: inset 0 0 0 0.35rem var(--red), 0.3rem 0.3rem 0 var(--black);
+      text-align: center;
+      font-size: clamp(0.82rem, 2vw, 1rem);
+      transform: rotate(7deg);
+    }
+
+    main {
+      display: grid;
+      gap: 1.3rem;
+      justify-items: center;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--red);
+      text-transform: uppercase;
+      line-height: 0.9;
+      letter-spacing: -0.05em;
+      font-size: clamp(4rem, 14vw, 9.5rem);
+      text-shadow: 0.05em 0.05em 0 var(--black);
+    }
+
+    h2 {
+      margin: 0;
+      max-width: 780px;
+      color: var(--black);
+      font-size: clamp(2.1rem, 7vw, 5rem);
+      line-height: 0.95;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      max-width: 710px;
+      margin: 0 auto;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.05rem, 2.5vw, 1.35rem);
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .panel {
+      width: min(760px, 100%);
+      background: rgba(255, 240, 207, 0.82);
+      border: 0.25rem solid var(--black);
+      box-shadow: 0.55rem 0.55rem 0 var(--red);
+      padding: clamp(1rem, 4vw, 2rem);
+      animation: rise 280ms ease-out;
+    }
+
+    .choices,
+    .profile-grid,
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.9rem;
+      margin-top: 1.2rem;
+    }
+
+    button {
+      appearance: none;
+      border: 0.22rem solid var(--black);
+      background: var(--red);
+      color: var(--paper);
+      box-shadow: 0.3rem 0.3rem 0 var(--black);
+      cursor: pointer;
+      font: inherit;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.9rem 1.15rem;
+      transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
+    }
+
+    button:hover,
+    button:focus-visible {
+      background: var(--dark-red);
+      box-shadow: 0.18rem 0.18rem 0 var(--black);
+      transform: translate(0.12rem, 0.12rem) rotate(-1deg);
+    }
+
+    button:active {
+      transform: translate(0.28rem, 0.28rem);
+      box-shadow: 0.04rem 0.04rem 0 var(--black);
+    }
+
+    .big-choice {
+      min-width: min(14rem, 100%);
+      font-size: clamp(2.2rem, 8vw, 4.4rem);
+      padding: 1rem 1.7rem;
+    }
+
+    .secondary {
+      background: var(--paper);
+      color: var(--black);
+    }
+
+    .profile-grid button {
+      min-width: min(18rem, 100%);
+      font-size: clamp(1.15rem, 4vw, 1.8rem);
+    }
+
+    .reply {
+      font-size: clamp(1.35rem, 4vw, 2.25rem);
+      line-height: 1.15;
+      text-transform: uppercase;
+    }
+
+    .slogan {
+      position: relative;
+      margin: 0;
+      font-size: clamp(1.75rem, 5.5vw, 3.6rem);
+      line-height: 1.02;
+      text-transform: uppercase;
+      color: var(--black);
+    }
+
+    .slogan::before,
+    .slogan::after {
+      color: var(--red);
+      font-size: 1.2em;
+    }
+
+    .slogan::before {
+      content: "“";
+    }
+
+    .slogan::after {
+      content: "”";
+    }
+
+    .profile-label {
+      display: inline-block;
+      margin-bottom: 0.8rem;
+      background: var(--black);
+      color: var(--paper);
+      padding: 0.35rem 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      transform: rotate(1deg);
+    }
+
+    footer {
+      margin-top: clamp(1.4rem, 4vw, 2.5rem);
+      text-align: center;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 700;
+      color: var(--black);
+    }
+
+    .ticker {
+      margin-top: 1rem;
+      padding-block: 0.45rem;
+      border-block: 0.18rem solid var(--black);
+      overflow: hidden;
+      white-space: nowrap;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .ticker span {
+      display: inline-block;
+      padding-left: 100%;
+      animation: march 18s linear infinite;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(0.8rem) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes march {
+      to {
+        transform: translateX(-100%);
+      }
+    }
+
+    @media (max-width: 620px) {
+      body {
+        padding: 0.6rem;
+      }
+
+      .poster {
+        border-width: 0.45rem;
+        border-radius: 0.7rem;
+        min-height: calc(100vh - 1.2rem);
+      }
+
+      header {
+        align-items: flex-start;
+      }
+
+      .stamp {
+        box-shadow: 0.22rem 0.22rem 0 var(--black);
+      }
+
+      .choices,
+      .profile-grid,
+      .actions {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="poster" aria-live="polite">
+    <header>
+      <div class="stamp">Enkelcomité Antwerpen-Noord</div>
+      <div class="badge german">Genosse<br />Jan</div>
+    </header>
+
+    <main>
+      <section id="intro" class="panel">
+        <h1>Is Jan weer grumpy?</h1>
+        <p class="subtitle">
+          Een wetenschappelijk onverantwoorde solidariteitsmeter voor kameraden,
+          bazen, liefdespartners en andere slachtoffers van de enkelcrisis.
+        </p>
+        <div class="choices" aria-label="Antwoord op de hoofdvraag">
+          <button class="big-choice" data-answer="yes">Ja</button>
+          <button class="big-choice secondary" data-answer="no">Nee</button>
+        </div>
+      </section>
+
+      <section id="no-panel" class="panel hidden">
+        <h2>Contrarevolutionaire informatie!</h2>
+        <p class="reply">
+          Neih, da’s nie mogelijk. Kameraad Jan is altijd een beetje grumpy.
+          Probeer opnieuw, kameraad.
+        </p>
+        <div class="actions">
+          <button data-reset>Terug naar de volksraadpleging</button>
+        </div>
+      </section>
+
+      <section id="profile-panel" class="panel hidden">
+        <h2>Wie zijt gij in de strijd tegen Jan zijn grumpiness?</h2>
+        <p class="subtitle">Kies uw frontlinie en ontvang propaganda op maat.</p>
+        <div class="profile-grid" aria-label="Kies je profiel">
+          <button data-profile="lief">Zijn lief</button>
+          <button data-profile="vriend">Een vriend</button>
+          <button data-profile="collega">Een collega</button>
+          <button data-profile="baas">De baas van Jan</button>
+        </div>
+      </section>
+
+      <section id="slogan-panel" class="panel hidden">
+        <span id="profile-label" class="profile-label"></span>
+        <p id="slogan" class="slogan"></p>
+        <div class="actions">
+          <button id="again">Geef mij nog een leuze</button>
+          <button class="secondary" data-reset>Begin opnieuw</button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Een solidariteitsinitiatief voor Kameraad Jan en zijn enkel.
+      <div class="ticker">
+        <span>Solidariteit met de enkel • minder zagen, meer genezen • de massa brengt soep • patron, geef koffie • </span>
+      </div>
+    </footer>
+  </section>
+
+  <script>
+    const slogans = {
+      lief: [
+        "Kameraad, de revolutie begint met één kop koffie en een beetje minder zagen tegen uw lief.",
+        "Zelfs het kapitaal heeft nog nooit zoveel geduld gevraagd als Jan met een gebroken enkel.",
+        "Liefde is de motor van de beweging; Jan zijn enkel is helaas nog een diesel uit 1987.",
+        "Aan het thuisfront geldt vandaag: solidariteit, kussens omhoog en geen staking tegen de afwas.",
+        "Genosse Jan, Disziplin! Eerst genezen, dan pas de romantische vakbondsvergadering verstoren.",
+        "Uw lief is geen patron, kameraad. Behandel haar dus met minder gegrom en meer revolutionaire appreciatie."
+      ],
+      vriend: [
+        "Kameraad Jan, de arbeidersklasse rekent op u. Eerst herstellen, dan opnieuw zeveren op café.",
+        "De revolutie wacht niet, maar voor uw enkel maken we uitzonderlijk vijf weken pauze.",
+        "Vrienden van de beweging leveren pintjes morele steun, maar geen excuses om ambetant te doen.",
+        "De massa roept: Jan op de sofa, grumpiness in staking, cafépraat in revalidatie.",
+        "Arbeiter aller zetels, verenigt u rond Jan en breng snacks voor de lange strijd.",
+        "Wie vandaag zijn kameraad bezoekt, bouwt morgen mee aan een samenleving met minder enkelgeklungel."
+      ],
+      collega: [
+        "Aan de werkvloer klinkt de roep: minder grommen, meer genezen.",
+        "Kameraad Jan, zelfs de patron wil dat ge terug mobiel wordt. Dat zegt genoeg.",
+        "De productie van grumpiness ligt 300 procent boven plan; de beweging eist bijsturing.",
+        "Collega's van alle bureaus, verenigt u: stuur memes, koffie en professioneel medelijden.",
+        "De werkvloer is tijdelijk bevrijd van Jan zijn pas, maar niet van zijn meningen in de groepschat.",
+        "Kapital und Kalender beven: Jan komt terug zodra zijn enkel de vijfjarenplanning haalt."
+      ],
+      baas: [
+        "Jan is tijdelijk buiten strijd, maar zijn grumpiness draait op volle capaciteit.",
+        "Managementmededeling: kameraad Jan wordt pas productief na koffie, medelijden en minstens drie revolutionaire complimenten.",
+        "Patron, toon solidariteit: elke Teams-meeting zonder enkelpauze is kleinburgerlijke onderdrukking.",
+        "De baas mag plannen maken, maar Jan zijn enkel erkent voorlopig geen kwartaaldoelstellingen.",
+        "Revolutionaire KPI: één genezende arbeider, nul nutteloze trappen, maximale compassie.",
+        "Genosse Chef, Disziplin van bovenaf: minder targets, meer herstel, anders gaat de kruk in staking."
+      ]
+    };
+
+    const profileNames = {
+      lief: "Front: zijn lief",
+      vriend: "Front: vriend",
+      collega: "Front: collega",
+      baas: "Front: de baas"
+    };
+
+    const panels = {
+      intro: document.querySelector("#intro"),
+      no: document.querySelector("#no-panel"),
+      profile: document.querySelector("#profile-panel"),
+      slogan: document.querySelector("#slogan-panel")
+    };
+
+    const sloganText = document.querySelector("#slogan");
+    const profileLabel = document.querySelector("#profile-label");
+    const againButton = document.querySelector("#again");
+    let currentProfile = null;
+    let previousSlogan = "";
+
+    function showPanel(name) {
+      Object.values(panels).forEach((panel) => panel.classList.add("hidden"));
+      panels[name].classList.remove("hidden");
+    }
+
+    function pickSlogan(profile) {
+      const options = slogans[profile];
+      let next = options[Math.floor(Math.random() * options.length)];
+
+      if (options.length > 1) {
+        while (next === previousSlogan) {
+          next = options[Math.floor(Math.random() * options.length)];
+        }
+      }
+
+      previousSlogan = next;
+      return next;
+    }
+
+    function showSlogan(profile) {
+      currentProfile = profile;
+      profileLabel.textContent = profileNames[profile];
+      sloganText.textContent = pickSlogan(profile);
+      sloganText.classList.toggle("german", /Genosse|Arbeiter|Kapital|Disziplin|Chef/.test(sloganText.textContent));
+      showPanel("slogan");
+    }
+
+    document.querySelectorAll("[data-answer]").forEach((button) => {
+      button.addEventListener("click", () => {
+        showPanel(button.dataset.answer === "yes" ? "profile" : "no");
+      });
+    });
+
+    document.querySelectorAll("[data-profile]").forEach((button) => {
+      button.addEventListener("click", () => showSlogan(button.dataset.profile));
+    });
+
+    document.querySelectorAll("[data-reset]").forEach((button) => {
+      button.addEventListener("click", () => {
+        currentProfile = null;
+        previousSlogan = "";
+        showPanel("intro");
+      });
+    });
+
+    againButton.addEventListener("click", () => {
+      if (currentProfile) {
+        showSlogan(currentProfile);
+      }
+    });
+  </script>
+</body>
+</html>
